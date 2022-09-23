@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-type Props<T> = {
+type Props<T = string> = {
   currentTab: T
   tabs: { label: string; value: T }[]
   onChange: (value: T) => void
