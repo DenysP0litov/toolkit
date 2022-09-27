@@ -1,2 +1,2 @@
-import './Pagination.scss'
-export * from './Pagination'
+import './pagination.scss'
+export * from './pagination'

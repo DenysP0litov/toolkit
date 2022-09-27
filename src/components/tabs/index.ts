@@ -1,2 +1,2 @@
-import './Tabs.scss'
-export * from './Tabs'
+import './tabs.scss'
+export * from './tabs'
