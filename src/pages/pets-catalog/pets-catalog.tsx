@@ -1,5 +1,6 @@
 import { Pagination } from 'components/pagination'
 import { Select } from 'components/select'
+import { Slider } from 'components/slider'
 import { Tabs } from 'components/tabs'
 import { useState } from 'react'
 
@@ -22,6 +23,7 @@ export const PetsCatalog = () => {
   const [sortType, setSortType] = useState(sortTypes[0].value)
   const [page, setPage] = useState(6)
   const [select, setSelect] = useState('')
+  const [sliderValue, setSlider] = useState(0.5)
   const pagesCount = 10
 
   return (
@@ -34,6 +36,7 @@ export const PetsCatalog = () => {
         onChange={setPage}
       />
       <Select title='Try me' currentValue={select} values={selects} onChange={setSelect}/>
+      <Slider value={sliderValue} onChange={setSlider}/>
     </>
   )
 }
