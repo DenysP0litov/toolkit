@@ -1,25 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 type Props = {
-  value?: number
+  value: number
   onChange: (newValue: number) => void
+  checkPoints?: number
 }
 
-export const Slider: React.FC<Props> = ({ value = 0.5, onChange }) => {
-  const slider = React.useRef<HTMLDivElement>(null)
-  const point = React.useRef<HTMLDivElement>(null)
+export const Slider: React.FC<Props> = ({ value = 0.5, checkPoints, onChange }) => {
+  const slider = useRef<HTMLDivElement>(null)
+  const point = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState(0)
 
-    useEffect(() => {
-      setPosition(value * (slider.current!.clientWidth - point.current!.clientWidth))
-    }, [])
+  useEffect(() => {
+    setPosition(
+      value * (slider.current!.clientWidth - point.current!.clientWidth)
+    )
+  }, [])
 
-    useEffect(() => {
-      onChange(position / (slider.current!.clientWidth - point.current!.clientWidth))
-    })
-    
-    const catchPoint = (event: React.MouseEvent) => {
+  useEffect(() => {
+      onChange(
+        position / (slider.current!.clientWidth - point.current!.clientWidth)
+      )
+
+    console.log(value)
+  })
+
+  const catchPoint = (event: React.MouseEvent) => {
     const shiftX = event.clientX - point.current!.getBoundingClientRect().left
+
     const movePoint = (moveEvent: React.MouseEvent) => {
       const newPosition =
         moveEvent.clientX -
@@ -31,21 +39,39 @@ export const Slider: React.FC<Props> = ({ value = 0.5, onChange }) => {
         setPosition(0)
       } else if (newPosition > rightEdge) {
         setPosition(rightEdge)
+      } else if (checkPoints) {
+        const checkPointsX = []
+
+        for (let i = 0; i < checkPoints; i++) {
+          checkPointsX.push(rightEdge / checkPoints * i)
+        }
+
+        let closestCheckpoint = 0
+        let closestDistance = rightEdge
+
+        checkPointsX.forEach((checkPointX, i) => {
+          if (Math.abs(newPosition - checkPointX) < closestDistance) {
+            closestDistance = Math.abs(newPosition - checkPointX)
+            closestCheckpoint = i
+          }
+        })
+
+        setPosition(checkPointsX[closestCheckpoint])
       } else {
         setPosition(newPosition)
       }
-
-      console.log(
-        position / (slider.current!.clientWidth - point.current!.clientWidth)
-      )
     }
 
     const putPoint = (event: React.MouseEvent) => {
+      // @ts-ignore
       document.removeEventListener('mousemove', movePoint)
+      // @ts-ignore
       document.removeEventListener('mouseup', putPoint)
     }
-
+    
+    // @ts-ignore
     document.addEventListener('mousemove', movePoint)
+    // @ts-ignore
     document.addEventListener('mouseup', putPoint)
   }
 
@@ -74,7 +100,8 @@ export const Slider: React.FC<Props> = ({ value = 0.5, onChange }) => {
         style={{
           left: position + 'px',
         }}
-        onDragStart={() => false}
+        onDragStart={(event) => {event.preventDefault()}}
+        onDrag={(event) => {event.preventDefault()}}
       />
       <div
         className="slider__filled-bar"

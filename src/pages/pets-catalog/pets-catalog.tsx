@@ -36,7 +36,8 @@ export const PetsCatalog = () => {
         onChange={setPage}
       />
       <Select title='Try me' currentValue={select} values={selects} onChange={setSelect}/>
-      <Slider value={sliderValue} onChange={setSlider}/>
+      <Slider value={sliderValue} onChange={setSlider} checkPoints={100}/>
+      Slider value: {Math.round(sliderValue * 100)}
     </>
   )
 }
