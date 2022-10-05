@@ -1,0 +1,17 @@
+.tabs {
+  list-style: none;
+  padding: 0;
+
+  &__tab {
+    display: inline-block;
+    padding: 8px;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &-active {
+      border-bottom: 3px solid blue;
+    }
+  }
+}
