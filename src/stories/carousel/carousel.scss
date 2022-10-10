@@ -1,0 +1,42 @@
+.carousel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: fit-content;
+
+    &__button {
+        display: inline-block;
+        height: 30px;
+        width: 30px;
+        border-radius: 15px;
+        border: 1px solid lightgray;
+        transition: 0.3s;
+
+        &:hover {
+            cursor: pointer;
+            border-color: blue;
+        }
+    }
+
+    &__slide-container {
+        width: 300px;
+        height: 50px;
+        overflow: hidden;
+    }
+
+    &__slides {
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        width: 300%;
+
+        transition-duration: 0.5s;
+    }
+
+    &__slide {
+        display: inline-block;
+        width: 300px;
+        text-align: center;
+    }
+}
