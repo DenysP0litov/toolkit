@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { Children, FC, ReactNode, useState } from 'react'
 import './carousel.scss'
 
 type Props = {
-    slides: string[]
+    children: ReactNode
 }
 
-export const Carousel: React.FC<Props> = ({slides}) => {
-    const [slide, setSlide] = useState(2)
+export const Carousel: FC<Props> = ({children}) => {
+    const [slide, setSlide] = useState(1)
+    const slides = Children.toArray(children)
     const slidesAmount = slides.length
 
     const changeSlide = (direction: string) => {

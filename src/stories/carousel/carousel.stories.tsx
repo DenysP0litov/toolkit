@@ -8,11 +8,21 @@ export default {
 
 const Template: ComponentStory<typeof Carousel> = (args) => {
     return (
-        <Carousel {...args}/>
+        <Carousel {...args}>
+            <div>
+                slide-1
+            </div>
+            <div>
+                slide-2
+            </div>
+            <div>
+                slide-3
+            </div>
+        </Carousel>
     )
 }
 
 export const Primary = Template.bind({});
 Primary.args = {
-    slides: ['slide-1', 'slide-2', 'slide-3', 'slide-4']
+
 };
