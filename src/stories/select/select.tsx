@@ -17,6 +17,8 @@ export const Select: React.FC<Props> = ({
   onChange,
 }) => {
   const [listStatus, setStatus] = useState(false)
+  const longestValueLength = Math.max(...values.map((value) => value.length))
+  const longestValue = values.find((value) => value.length === longestValueLength)
 
   const changeSelect = (value: string) => {
     onChange(value)
@@ -37,6 +39,9 @@ export const Select: React.FC<Props> = ({
         ) : (
           <ArrowDropDown className="select__arrow" />
         )}
+      </div>
+      <div className='select__width-expander'>
+          {longestValue}
       </div>
       <ul
         className={classNames('select__list', {
