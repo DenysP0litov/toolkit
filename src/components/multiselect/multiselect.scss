@@ -1,0 +1,63 @@
+.multiselect {
+    display: inline-block;
+    width: 200px;
+    position: relative;
+
+    &__field {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 6px;
+
+        border: 1px solid lightgray;
+        border-radius: 10px;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &--unselected {
+            font-style: italic;
+            color: gray;
+        }
+    }
+
+    &__arrow {
+        color: black;
+    }
+
+    &__list {
+        position: absolute;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 6px;
+
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 4px 4px 4px 0px rgba(0,0,0,0.66);
+
+        z-index: 1;
+
+        list-style: none;
+        display: none;
+
+
+        &-item {
+            &:hover {
+                cursor: pointer;
+                background-color: lightskyblue;
+            }
+
+            &--active {
+                border-bottom: 2px solid blue;
+            }
+        }
+
+        &--active {
+            display: inherit;
+        }
+    }
+}
