@@ -1,7 +1,5 @@
-import { PetsCatalog } from 'pages/pets-catalog'
-
 function App() {
-  return <PetsCatalog />
+  return <></>
 }
 
 export default App

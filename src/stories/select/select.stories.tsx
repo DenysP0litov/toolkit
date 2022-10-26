@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Select } from './select'
+import { optionsType, Select } from './select'
 import { useState } from 'react'
 
 export default {
@@ -8,15 +8,23 @@ export default {
 } as ComponentMeta<typeof Select>;
 
 const Template: ComponentStory<typeof Select> = (args) => {
-    const [select, setSelect] = useState('')
+    const [select, setSelect] 
+        = useState<optionsType<number> | undefined>(undefined)
 
     return (
-        <Select {...args} onChange={setSelect} currentValue={select}/>
+        <Select {...args} onChange={setSelect} currentOption={select}/>
     )
 }
 
 export const Primary = Template.bind({});
 Primary.args = {
     title: 'Select',
-    values: ['First', 'Second', 'Third', 'Hello', 'World', 'Not so long name'],
+    options: [
+        {label:'First', value: 1}, 
+        {label:'Second', value: 2}, 
+        {label:'Third', value: 3}, 
+        {label:'Fourth', value: 4},
+        {label:'Fifth', value: 5}, 
+        {label:'Sixth', value: 6}
+    ],
 };

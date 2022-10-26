@@ -3,30 +3,37 @@ import classNames from 'classnames'
 import { useState } from 'react'
 import './multiselect.scss'
 
-type Props = {
-  title: string
-  currentValues: string[]
-  values: string[]
-  onChange: (value: string[]) => void
+export type valuesType<T> = {
+  label: string
+  value: T
 }
 
-export const Multiselect: React.FC<Props> = ({
+type Props<T> = {
+  title: string
+  currentOptions: valuesType<T>[]
+  options: valuesType<T>[]
+  onChange: (option: valuesType<T>[]) => void
+}
+
+export const Multiselect: React.FC<Props<any>> = ({
   title,
-  currentValues,
-  values,
+  currentOptions,
+  options,
   onChange,
 }) => {
   const [listStatus, setStatus] = useState(false)
 
-  const handleSelectClick = (value: string) => {
-    if (!value) onChange([])
-    else if (!currentValues.includes(value))
-      onChange([...currentValues, value])
-    else if (currentValues.includes(value)) {
-      const valueIndex = currentValues.findIndex(curValue => curValue === value)
+  const handleSelectClick = (option: valuesType<any> | undefined) => {
+    if (!option) onChange([])
+    else if (!currentOptions.includes(option))
+      onChange([...currentOptions, option])
+    else if (currentOptions.includes(option)) {
+      const valueIndex = currentOptions.findIndex(
+        currentOption => currentOption === option
+      )
       onChange([
-        ...currentValues.slice(0, valueIndex),
-        ...currentValues.slice(valueIndex + 1)
+        ...currentOptions.slice(0, valueIndex),
+        ...currentOptions.slice(valueIndex + 1)
       ])
     }
     setStatus(false)
@@ -36,14 +43,14 @@ export const Multiselect: React.FC<Props> = ({
     <div className="multiselect">
       <div
         className={classNames('multiselect__field', {
-          'multiselect__field--unselected': currentValues.length === 0
+          'multiselect__field--unselected': currentOptions.length === 0
       ,
         })}
         onClick={() => setStatus(!listStatus)}
       >
-        {currentValues.length === 0
+        {currentOptions.length === 0
           ? title
-          : currentValues.join(', ')
+          : currentOptions.map(option => option.label).join(', ')
         }
         {listStatus ? (
           <ArrowDropUp className="multiselect__arrow" />
@@ -57,21 +64,21 @@ export const Multiselect: React.FC<Props> = ({
         })}
       >
         <li
-          onClick={() => handleSelectClick('')}
+          onClick={() => handleSelectClick(undefined)}
           key="Clear"
           className="multiselect__list-item"
         >
           Clear
         </li>
-        {values.map((value) => (
+        {options.map((option) => (
           <li
-            onClick={() => handleSelectClick(value)}
-            key={value}
+            onClick={() => handleSelectClick(option)}
+            key={option.label}
             className={classNames('multiselect__list-item', {
-              'multiselect__list-item--active': currentValues.includes(value),
+              'multiselect__list-item--active': currentOptions.includes(option),
             })}
           >
-            {value}
+            {option.label}
           </li>
         ))}
       </ul>
