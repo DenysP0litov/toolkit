@@ -3,27 +3,27 @@ import classNames from 'classnames'
 import { useState } from 'react'
 import './multiselect.scss'
 
-export type valuesType<T> = {
+export type valuesType<T extends any = number> = {
   label: string
   value: T
 }
 
-type Props<T> = {
+type Props<T extends any = number> = {
   title: string
   currentOptions: valuesType<T>[]
   options: valuesType<T>[]
   onChange: (option: valuesType<T>[]) => void
 }
 
-export const Multiselect: React.FC<Props<any>> = ({
+export const Multiselect = <T extends any = number>({
   title,
   currentOptions,
   options,
   onChange,
-}) => {
+}: Props<T>) => {
   const [listStatus, setStatus] = useState(false)
 
-  const handleSelectClick = (option: valuesType<any> | undefined) => {
+  const handleSelectClick = (option: valuesType<T> | undefined) => {
     if (!option) onChange([])
     else if (!currentOptions.includes(option))
       onChange([...currentOptions, option])

@@ -7,7 +7,7 @@ export default {
     component: Multiselect,
 } as ComponentMeta<typeof Multiselect>;
 
-const Template: ComponentStory<typeof Multiselect> = (args) => {
+const Template: ComponentStory<typeof Multiselect<number>> = (args) => {
     const [select, setSelect] = useState<valuesType<number>[]>([])
 
     return (

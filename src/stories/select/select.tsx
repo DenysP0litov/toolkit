@@ -3,27 +3,27 @@ import classNames from 'classnames'
 import { useState } from 'react'
 import './select.scss'
 
-export type optionsType<T> = {
+export type optionsType<T extends any = number> = {
   label: string
   value: T
 }
 
-type Props<T> = {
+type Props<T extends any = number> = {
   title: string
   currentOption: optionsType<T> | undefined
   options: optionsType<T>[]
   onChange: (value: optionsType<T> | undefined) => void
 }
 
-export const Select: React.FC<Props<any>> = ({
+export const Select = <T extends any = number>({
   title,
   currentOption,
   options,
   onChange,
-}) => {
+}: Props<T>) => {
   const [isOpened, setOpened] = useState(false)
 
-  const changeSelect = (option: optionsType<any> | undefined) => {
+  const changeSelect = (option: optionsType<T> | undefined) => {
     onChange(option)
     setOpened(false)
   }

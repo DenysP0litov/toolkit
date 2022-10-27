@@ -7,7 +7,7 @@ export default {
     component: Select,
 } as ComponentMeta<typeof Select>;
 
-const Template: ComponentStory<typeof Select> = (args) => {
+const Template: ComponentStory<typeof Select<number>> = (args) => {
     const [select, setSelect] 
         = useState<optionsType<number> | undefined>(undefined)
 
