@@ -1,10 +1,11 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ExpandableSidebar } from './expandable-sidebar'
 import { useState } from 'react'
-import './expandable-sidebar.stories.scss'
+import './styles'
+import { FiltersForm } from './filters-form'
 
 export default {
-  title: 'Expandable Sidebar',
+  title: 'Filters',
   component: ExpandableSidebar,
 } as ComponentMeta<typeof ExpandableSidebar>
 
@@ -13,10 +14,12 @@ const Template: ComponentStory<typeof ExpandableSidebar> = (args) => {
 
   return (
     <main>
-      <button className='sidebar-story-button' onClick={() => setSidebar(true)}>Open sidebar</button>
-      <ExpandableSidebar onChange={setSidebar} status={sidebarStatus}>
-        <h1>Hello world!</h1>
-        <button className='sidebar-story-button' onClick={() => setSidebar(false)}>Bye!</button>
+      <button className='sidebar-story-button' onClick={() => setSidebar(true)}>
+        Open sidebar
+      </button>
+
+      <ExpandableSidebar onChange={setSidebar} status={sidebarStatus} title='Filters'>
+          <FiltersForm onSubmit={() => setSidebar(false)}/>
       </ExpandableSidebar>
     </main>
   )

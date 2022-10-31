@@ -1,15 +1,18 @@
 import classNames from 'classnames'
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
-import './expandable-sidebar.scss'
+import CloseIcon from '@mui/icons-material/Close';
+import './styles'
 
 type Props = {
   children: ReactNode
+  title: string
   status: boolean
   onChange: (value: boolean) => void
 }
 
 export const ExpandableSidebar: FC<Props> = ({
   children,
+  title,
   status,
   onChange,
 }) => {
@@ -46,7 +49,18 @@ export const ExpandableSidebar: FC<Props> = ({
           onClick={(event) => handleClick(event)}
           ref={sidebar}
         >
-          <div className="sidebar-content">{children}</div>
+          <div className="sidebar__content">
+            <div className='sidebar__header'>
+              <h1 className='sidebar__title'>{title}</h1>
+              <div 
+                className="sidebar__close-button"
+                onClick={() => onChange(false)}
+              >
+                <CloseIcon />
+              </div>
+            </div>
+            {children}
+          </div>
         </div>
       )}
     </>

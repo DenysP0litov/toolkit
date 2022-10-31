@@ -1,0 +1,85 @@
+.filters-form {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__section {
+    &-title {
+      font-size: 16px;
+      margin: 0 0 8px 0;
+    }
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  &__field {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+
+    box-sizing: border-box;
+    height: 34px;
+    width: 100%;
+    padding: 6px;
+
+    border: 1px solid lightgray;
+    border-radius: 10px;
+
+    &:focus {
+      outline: 2px solid blue;
+    }
+
+    &--textarea {
+      height: 68px;
+      resize: none;
+      
+      &::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 10px;
+        background-color: lightgrey;
+
+        &-thumb {
+            background-color: blue;
+            height: 10px;
+            border-radius: 10px;
+        }
+      }
+    }
+
+    &--range {
+      width: 40%;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+    }
+  }
+
+  &__select {
+    width: 150px;
+  }
+
+  &__button {
+    width: 40%;
+    padding: 6px;
+
+    background-color: blue;
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+  }
+
+  &__error {
+    color: red;
+    font-size: 12px;
+  }
+}

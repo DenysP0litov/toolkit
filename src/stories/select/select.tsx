@@ -9,6 +9,7 @@ export type optionsType<T extends any = number> = {
 }
 
 type Props<T extends any = number> = {
+  className?: string
   title: string
   currentOption: optionsType<T> | undefined
   options: optionsType<T>[]
@@ -20,6 +21,7 @@ export const Select = <T extends any = number>({
   currentOption,
   options,
   onChange,
+  className,
 }: Props<T>) => {
   const [isOpened, setOpened] = useState(false)
 
@@ -29,10 +31,11 @@ export const Select = <T extends any = number>({
   }
 
   return (
-    <div className="select">
+    <div className={`select`}>
       <div
         className={classNames('select__field', {
           'select__field--unselected': !currentOption,
+          [`${className}`]: className,
         })}
         onClick={() => setOpened(!isOpened)}
       >

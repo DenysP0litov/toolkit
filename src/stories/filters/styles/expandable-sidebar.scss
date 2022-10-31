@@ -1,0 +1,58 @@
+.sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    transition-duration: 0.5s;
+
+    &__title {
+        margin: 0;
+        transition-duration: 3s;
+    }
+
+    &__close-button {
+        height: 24px;
+        border-radius: 4px;
+        transition-duration: 0.3s;
+
+        &:hover {
+            cursor: pointer;
+            background-color: lightgray;
+        }
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 16px;
+    }
+
+    &__content {
+        float: right;
+        max-height: 100vh;
+
+        box-sizing: border-box;
+        height: 100%;
+        width: 30%; 
+        padding: 40px;
+
+        overflow-y: scroll;
+
+        background-color: white;
+
+        transition-duration: 0.5s;
+
+        transform: translateX(100%);
+    }
+
+    &--shown {
+        background-color: #00000066;
+
+        .sidebar__content {
+            transform: translateX(0);
+        }
+    }
+}
