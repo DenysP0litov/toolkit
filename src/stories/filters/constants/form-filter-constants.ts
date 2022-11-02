@@ -1,4 +1,4 @@
-import { AttributeType, FiltersType, JewelryNameType, JewelryType, LabelType } from "../types";
+import { AttributeNameType, AttributeType, FiltersType, JewelryNameType, JewelryType, LabelType } from "../types";
 
 export const jewelryTypeList: JewelryType[] = [
   {
@@ -112,4 +112,13 @@ export const initialFilters: FiltersType = {
   quantity: [0, 100],
   jewelryTypeId: undefined,
   labelsIds: undefined,
+}
+
+export const AttributeNames: Record<AttributeNameType, string> = {
+  title: "Product Title",
+  description: "Product Description",
+  price: "Price",
+  quantity: "Quantity",
+  jewelryType: "Jewelry Type",
+  labels: "Tags/Labels"
 }
