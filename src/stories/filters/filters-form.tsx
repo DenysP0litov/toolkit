@@ -1,7 +1,7 @@
 import { optionsType as SelectOptionType, Select } from 'stories/select'
 
 import { valuesType as MultiSelectOptionType } from 'stories/multiselect'
-import { FC, FormEvent, useState } from "react"
+import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import { Multiselect } from "stories/multiselect"
 import { AttributeNameType, AttributeType, JewelryType, LabelType, PayloadType } from "./types"
 import { parseOptions } from "./utils"
@@ -37,8 +37,31 @@ type StateType = {
   errors: ErrorsType
 }
 
+function useStateCallback<T>(
+  initialState: T
+): [T, (state: T, cb?: (state: T) => void) => void] {
+  const [state, setState] = useState(initialState);
+  const cbRef = useRef<((state: T) => void) | undefined>(undefined); // init mutable ref container for callbacks
+
+  const setStateCallback = useCallback((state: T, cb?: (state: T) => void) => {
+    cbRef.current = cb; // store current, passed callback in ref
+    setState(state);
+  }, []); // keep object reference stable, exactly like `useState`
+
+  useEffect(() => {
+    // cb.current is `undefined` on initial render,
+    // so we only invoke callback on state *updates*
+    if (cbRef.current) {
+      cbRef.current(state);
+      cbRef.current = undefined; // reset callback after execution
+    }
+  }, [state]);
+
+  return [state, setStateCallback];
+}
+
 export const FiltersForm: FC<Props> = ({onSubmit}) => {
-  const [state, setState] = useState<StateType>({
+  const [state, setState] = useStateCallback<StateType>({
     title: '',
     description: '',
     price: {from: 0, to: 1000},
@@ -147,34 +170,6 @@ export const FiltersForm: FC<Props> = ({onSubmit}) => {
     })
   }
 
-  const validate = () => {
-    const newErrors = errors
-  
-    if (title.length > 100) setState({...state, errors: 
-      {...errors, title: 'Maximal title length is 100 symbols'}}) 
-
-    if (description.length > 100) setState({...state, errors: 
-      {...errors, description: 'Maximal description length is 100 symbols'}}) 
-
-    if (price.from > price.to) setState({...state, errors: 
-      {...errors, price: 'Invalid price range'}}) 
-    else if (price.from > 1000 || price.to > 1000) setState({...state, errors: 
-      {...errors, price: 'Maximal price value is 1000'}}) 
-    
-    if (quantity.from > quantity.to) setState({...state, errors: 
-      {...errors, quantity: 'Invalid quantity range'}}) 
-    else if (quantity.from > 100 || quantity.to > 100) setState({...state, errors: 
-      {...errors, quantity: 'Maximal quantity value is 100'}}) 
-
-    for (let k in errors) {
-      const key = k as keyof ErrorsType
-      console.log(errors[key])
-      if (errors[key]) return false
-    }
-
-    return true
-  }
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -199,7 +194,6 @@ export const FiltersForm: FC<Props> = ({onSubmit}) => {
     setState({...state, errors: newErrors}, () => {
       for (let k in errors) {
         const key = k as keyof ErrorsType
-        console.log(errors[key])
         if (errors[key]) return
       }
   
