@@ -1,17 +1,21 @@
 import { FC } from "react"
 
 export type NumberRangeType = {
-  from: number
-  to: number
+  from: string
+  to: string
 }
 
 type Props = {
   value: NumberRangeType
   name: string
-  onChange: (value: number, option: 'from' | 'to') => void
+  onChange: (value: string, option: 'from' | 'to') => void
 }
 
 export const NumberRangeInput: FC<Props> = ({value, name, onChange}) => {
+  const handleBlur = (value: string, option: 'from' | 'to') => {
+    if (value === '') onChange('0', option)
+  }
+
   return (
     <div className="filters-form__row">
       <input
@@ -19,10 +23,10 @@ export const NumberRangeInput: FC<Props> = ({value, name, onChange}) => {
           filters-form__field 
           filters-form__field--range
         ' 
-        type='number' 
+        type='text' 
         name={`min-${name}`} 
-        min={0}
-        onChange={(e) => onChange(+e.target.value, 'from')}
+        onChange={(e) => onChange(e.target.value, 'from')}
+        onBlur={(e) => handleBlur(e.target.value, 'from')}
         value={value.from}
       />
       <input
@@ -30,10 +34,10 @@ export const NumberRangeInput: FC<Props> = ({value, name, onChange}) => {
           filters-form__field 
           filters-form__field--range
         ' 
-        type='number' 
-        name='max-price' 
-        min={0}
-        onChange={(e) => onChange(+e.target.value, 'to')}
+        type='text' 
+        name='max-price'
+        onChange={(e) => onChange(e.target.value, 'to')}
+        onBlur={(e) => handleBlur(e.target.value, 'to')}
         value={value.to}
       />
     </div>

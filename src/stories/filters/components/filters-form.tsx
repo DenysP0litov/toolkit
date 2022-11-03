@@ -41,8 +41,8 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
   const [state, setState] = useStateCallback<StateType>({
     title: '',
     description: '',
-    price: { from: 0, to: 1000 },
-    quantity: { from: 0, to: 100 },
+    price: { from: '0', to: '1000' },
+    quantity: { from: '0', to: '100' },
     jewelryType: undefined,
     labels: [],
     errors: {},
@@ -52,8 +52,10 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
     state
 
   const setRange = (name: AttributeNameType) => {
-    return (value: number, option: 'from' | 'to') => {
-      const newRange = state[name] as NumberRangeType
+    return (value: string, option: 'from' | 'to') => {
+      if (isNaN(+value)) return
+  
+      const newRange = state[name] as {from: string, to: string}
       newRange[option] = value
       setState({
         ...state,
@@ -85,6 +87,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
         return (
           <>
             <input
+              key={name}
               className="filters-form__field"
               type="text"
               name={name}
@@ -104,7 +107,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
             <NumberRangeInput
               name={name}
               onChange={setRange(name)}
-              value={state[name] as NumberRangeType}
+              value={state[name] as {from: string, to: string}}
             />
             {errors[name] && (
               <span className="filters-form__error">{errors[name]}</span>
@@ -116,6 +119,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
         if (options) {
           return (
             <Select
+              key={name}
               className="filters-form__select"
               title={`Select ${AttributeNames[name]}`}
               options={parseOptions(options as JewelryType[] | LabelType[])}
@@ -129,6 +133,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
       case 'multiselect':
         return (
           <Multiselect
+            key={name}
             title={`Select ${AttributeNames[name]}`}
             options={parseOptions(options as JewelryType[] | LabelType[])}
             currentOptions={state[name] as MultiSelectOptionType<number>[]}
@@ -142,8 +147,8 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
     setState({
       title: '',
       description: '',
-      price: { from: 0, to: 1000 },
-      quantity: { from: 0, to: 100 },
+      price: { from: '0', to: '1000' },
+      quantity: { from: '0', to: '100' },
       jewelryType: undefined,
       labels: [],
       errors: {},
@@ -161,13 +166,13 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
       newErrors.description = 'Maximal title ldescription is 1000'
 
     if (price.from > price.to) newErrors.price = 'Invalid price range'
-    else if (price.from > 1000 || price.to > 1000)
+    else if (+price.from > 1000 || +price.to > 1000)
       newErrors.price = 'Maximal price value is 1000'
 
     if (quantity.from > quantity.to)
       newErrors.quantity = 'Invalid quantity range'
-    else if (quantity.from > 100 || quantity.to > 100)
-      newErrors.quantity = 'Maximal price quantity is 100'
+    else if (+quantity.from > 100 || +quantity.to > 100)
+      newErrors.quantity = 'Maximal quantity value is 100'
 
     setState({ ...state, errors: newErrors }, () => {
       for (let k in errors) {
@@ -178,8 +183,8 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
       const filters: PayloadType = {
         title,
         description,
-        price: [price.from, price.to],
-        quantity: [quantity.from, quantity.to],
+        price: [+price.from, +price.to],
+        quantity: [+quantity.from, +quantity.to],
         jewelryTypeId: jewelryType?.value,
         labelsIds: labels.map((label) => label.value),
       }
@@ -191,7 +196,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
   return (
     <form className="filters-form" onSubmit={(e) => handleSubmit(e)}>
       {attributesList.map((attribute) => (
-        <div className="filters-form__section">
+        <div className="filters-form__section" key={attribute.name}>
           <h2 className="filters-form__section-title">
             {AttributeNames[attribute.name]}
           </h2>
