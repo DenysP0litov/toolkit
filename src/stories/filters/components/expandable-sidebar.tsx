@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
-import CloseIcon from '@mui/icons-material/Close';
-import './styles'
+import CloseIcon from '@mui/icons-material/Close'
+import '../styles'
 
 type Props = {
   children: ReactNode
@@ -50,9 +50,9 @@ export const ExpandableSidebar: FC<Props> = ({
           ref={sidebar}
         >
           <div className="sidebar__content">
-            <div className='sidebar__header'>
-              <h1 className='sidebar__title'>{title}</h1>
-              <div 
+            <div className="sidebar__header">
+              <h1 className="sidebar__title">{title}</h1>
+              <div
                 className="sidebar__close-button"
                 onClick={() => onChange(false)}
               >

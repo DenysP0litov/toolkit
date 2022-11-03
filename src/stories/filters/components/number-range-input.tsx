@@ -1,7 +1,12 @@
 import { FC } from "react"
 
+export type NumberRangeType = {
+  from: number
+  to: number
+}
+
 type Props = {
-  value: {from: number, to: number}
+  value: NumberRangeType
   name: string
   onChange: (value: number, option: 'from' | 'to') => void
 }
