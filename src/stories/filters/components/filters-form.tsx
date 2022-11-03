@@ -165,11 +165,19 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
     if (description.length > 100)
       newErrors.description = 'Maximal title ldescription is 1000'
 
-    if (price.from > price.to) newErrors.price = 'Invalid price range'
+    if (
+      +price.from > +price.to
+      || +price.from < 0
+      || +price.to < 0
+    ) newErrors.price = 'Invalid price range'
     else if (+price.from > 1000 || +price.to > 1000)
       newErrors.price = 'Maximal price value is 1000'
 
-    if (quantity.from > quantity.to)
+    if (
+      +quantity.from > +quantity.to
+      || +quantity.from < 0
+      || +quantity.to < 0
+    )
       newErrors.quantity = 'Invalid quantity range'
     else if (+quantity.from > 100 || +quantity.to > 100)
       newErrors.quantity = 'Maximal quantity value is 100'
