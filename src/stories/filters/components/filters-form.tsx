@@ -6,16 +6,18 @@ import { Multiselect } from 'stories/multiselect'
 import {
   AttributeNameType,
   AttributeType,
+  FiltersType,
   JewelryType,
   LabelType,
-  PayloadType,
 } from '../types'
 import { parseOptions, useStateCallback } from '../utils'
-import { AttributeNames, attributesList } from '../constants'
+import { AttributeNames, attributesList, jewelryTypeList, labelsList } from '../constants'
 import { NumberRangeInput, NumberRangeType } from './number-range-input'
 
 type Props = {
   onSubmit: () => void
+  filters: FiltersType
+  setFilters: (filters: FiltersType) => void
 }
 
 type ErrorsType = {
@@ -27,7 +29,7 @@ type ErrorsType = {
   labels?: string
 }
 
-type StateType = {
+export type FiltersFormType = {
   title: string
   description: string
   price: NumberRangeType
@@ -37,14 +39,27 @@ type StateType = {
   errors: ErrorsType
 }
 
-export const FiltersForm: FC<Props> = ({ onSubmit }) => {
-  const [state, setState] = useStateCallback<StateType>({
-    title: '',
-    description: '',
-    price: { from: '0', to: '1000' },
-    quantity: { from: '0', to: '100' },
-    jewelryType: undefined,
-    labels: [],
+export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
+  const [state, setState] = useStateCallback<FiltersFormType>({
+    title: filters.title,
+    description: filters.description,
+    price: { 
+      from: `${filters.price[0]}`, 
+      to: `${filters.price[1]}` 
+    },
+    quantity: { 
+      from: `${filters.quantity[0]}`, 
+      to: `${filters.quantity[1]}` 
+    },
+    ...(filters.jewelryTypeId && {jewelryType: {
+      label: jewelryTypeList.find(type => type._id === filters.jewelryTypeId)!.name,
+      value: filters.jewelryTypeId
+    }}),
+    ...((filters.labelsIds && {labels: 
+      filters.labelsIds.map(
+        id => ({ label: labelsList.find(label => label._id === id)!.name, value: id})
+      )
+    }) || {labels: []}),
     errors: {},
   })
 
@@ -188,16 +203,17 @@ export const FiltersForm: FC<Props> = ({ onSubmit }) => {
         if (errors[key]) return
       }
 
-      const filters: PayloadType = {
+      const filters: FiltersType = {
         title,
         description,
         price: [+price.from, +price.to],
         quantity: [+quantity.from, +quantity.to],
         jewelryTypeId: jewelryType?.value,
-        labelsIds: labels.map((label) => label.value),
+        labelsIds: labels?.map((label) => label.value),
       }
 
-      console.log(filters)
+      setFilters(filters)
+      onSubmit()
     })
   }
 

@@ -3,6 +3,7 @@ import { ExpandableSidebar } from './components/expandable-sidebar'
 import { useState } from 'react'
 import './styles'
 import { FiltersForm } from './components/filters-form'
+import { FiltersType } from './types'
 
 export default {
   title: 'Filters',
@@ -11,6 +12,14 @@ export default {
 
 const Template: ComponentStory<typeof ExpandableSidebar> = (args) => {
   const [sidebarStatus, setSidebar] = useState(false)
+  const [filters, setFilters] = useState<FiltersType>({
+    title: '',
+    description: '',
+    price: [0, 1000],
+    quantity: [0, 100],
+    jewelryTypeId: undefined,
+    labelsIds: [],
+  })
 
   return (
     <main>
@@ -23,7 +32,11 @@ const Template: ComponentStory<typeof ExpandableSidebar> = (args) => {
         status={sidebarStatus}
         title="Filters"
       >
-        <FiltersForm onSubmit={() => setSidebar(false)} />
+        <FiltersForm
+          onSubmit={() => setSidebar(false)}
+          setFilters={setFilters}
+          filters={filters}
+        />
       </ExpandableSidebar>
     </main>
   )
