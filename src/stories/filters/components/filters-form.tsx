@@ -84,6 +84,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
   useEffect(() => {
     const newErrors = { ...errors }
     let newSubmitStatus = !compareObjects(state, initialState)
+    console.log({initialState, state})
 
     if (title.length > 100) newErrors.title = 'Maximal title length is 100'
 
@@ -212,6 +213,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       jewelryType: undefined,
       labels: [],
     })
+    setErrors({})
   }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

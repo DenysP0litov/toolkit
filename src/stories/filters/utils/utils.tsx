@@ -64,20 +64,8 @@ export const parseLabelOptions =
   return selectOptions
 }
 
-export function compareObjects<K extends keyof T, T extends Record<K, any>>(object1: T, object2: T) {
-  for (let k in object1) {
-    const key = k as keyof T
-    const val1 = object1[key];
-    const val2 = object2[key];
-    const areObjects = isObject(val1) && isObject(val2);
-    if (
-      (areObjects && !compareObjects(val1, val2)) ||
-      (!areObjects && val1 !== val2)
-    ) {
-      return false;
-    }
-  }
-  return true;
+export const compareObjects = <T extends object>(obj1: T, obj2: T) => {
+  return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
 
 export function isObject<T extends object>(object: T) {
