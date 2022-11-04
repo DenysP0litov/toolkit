@@ -76,6 +76,10 @@
 
     border: none;
     border-radius: 10px;
+    
+    &:disabled {
+      opacity: 50%;
+    }
   }
 
   &__error {

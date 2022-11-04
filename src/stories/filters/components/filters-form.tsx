@@ -1,7 +1,9 @@
-import { optionsType as SelectOptionType, Select } from 'stories/select'
-
-import { valuesType as MultiSelectOptionType } from 'stories/multiselect'
-import { FC, FormEvent } from 'react'
+import {
+  optionsType,
+  optionsType as SelectOptionType,
+  Select,
+} from 'stories/select'
+import { FC, FormEvent, useEffect, useState } from 'react'
 import { Multiselect } from 'stories/multiselect'
 import {
   AttributeNameType,
@@ -10,8 +12,13 @@ import {
   JewelryType,
   LabelType,
 } from '../types'
-import { parseOptions, useStateCallback } from '../utils'
-import { AttributeNames, attributesList, jewelryTypeList, labelsList } from '../constants'
+import { compareObjects, parseOptions, useStateCallback } from '../utils'
+import {
+  AttributeNames,
+  attributesList,
+  jewelryTypeList,
+  labelsList,
+} from '../constants'
 import { NumberRangeInput, NumberRangeType } from './number-range-input'
 
 type Props = {
@@ -34,49 +41,88 @@ export type FiltersFormType = {
   description: string
   price: NumberRangeType
   quantity: NumberRangeType
-  jewelryType?: SelectOptionType<number>
-  labels: MultiSelectOptionType<number>[]
-  errors: ErrorsType
+  jewelryType?: optionsType<number>
+  labels: optionsType<number>[]
 }
 
 export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
-  const [state, setState] = useStateCallback<FiltersFormType>({
+  const initialState = {
     title: filters.title,
     description: filters.description,
-    price: { 
-      from: `${filters.price[0]}`, 
-      to: `${filters.price[1]}` 
+    price: {
+      from: `${filters.price[0]}`,
+      to: `${filters.price[1]}`,
     },
-    quantity: { 
-      from: `${filters.quantity[0]}`, 
-      to: `${filters.quantity[1]}` 
+    quantity: {
+      from: `${filters.quantity[0]}`,
+      to: `${filters.quantity[1]}`,
     },
-    ...(filters.jewelryTypeId && {jewelryType: {
-      label: jewelryTypeList.find(type => type._id === filters.jewelryTypeId)!.name,
-      value: filters.jewelryTypeId
-    }}),
-    ...((filters.labelsIds && {labels: 
-      filters.labelsIds.map(
-        id => ({ label: labelsList.find(label => label._id === id)!.name, value: id})
-      )
-    }) || {labels: []}),
-    errors: {},
-  })
+    ...(filters.jewelryTypeId && {
+      jewelryType: {
+        label: jewelryTypeList.find(
+          (type) => type._id === filters.jewelryTypeId
+        )!.name,
+        value: filters.jewelryTypeId,
+      },
+    }),
+    ...((filters.labelsIds && {
+      labels: filters.labelsIds.map((id) => ({
+        label: labelsList.find((label) => label._id === id)!.name,
+        value: id,
+      })),
+    }) || { labels: [] }),
+  }
 
-  const { title, description, price, quantity, jewelryType, labels, errors } =
-    state
+  const [state, setState] = useState<FiltersFormType>({ ...initialState })
+
+  const [errors, setErrors] = useStateCallback<ErrorsType>({})
+
+  const [isReadyToSubmit, setReadyToSubmit] = useState(false)
+
+  const { title, description, price, quantity, jewelryType, labels } = state
+
+  useEffect(() => {
+    const newErrors = { ...errors }
+    let newSubmitStatus = !compareObjects(state, initialState)
+
+    if (title.length > 100) newErrors.title = 'Maximal title length is 100'
+
+    if (description.length > 100)
+      newErrors.description = 'Maximal title ldescription is 1000'
+
+    if (+price.from > +price.to || +price.from < 0 || +price.to < 0)
+      newErrors.price = 'Invalid price range'
+    else if (+price.from > 1000 || +price.to > 1000)
+      newErrors.price = 'Maximal price value is 1000'
+
+    if (+quantity.from > +quantity.to || +quantity.from < 0 || +quantity.to < 0)
+      newErrors.quantity = 'Invalid quantity range'
+    else if (+quantity.from > 100 || +quantity.to > 100)
+      newErrors.quantity = 'Maximal quantity value is 100'
+
+    for (let k in newErrors) {
+      const key = k as keyof ErrorsType
+      if (newErrors[key]) {
+        newSubmitStatus = false
+      }
+    }
+
+    setErrors(newErrors)
+    setReadyToSubmit(newSubmitStatus)
+  }, [state])
 
   const setRange = (name: AttributeNameType) => {
     return (value: string, option: 'from' | 'to') => {
       if (isNaN(+value)) return
-  
-      const newRange = state[name] as {from: string, to: string}
+
+      const newRange = state[name] as { from: string; to: string }
       newRange[option] = value
       setState({
         ...state,
         [name]: newRange,
-        errors: { ...errors, [name]: '' },
       })
+
+      setErrors({ ...errors, [name]: '' })
     }
   }
 
@@ -122,7 +168,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
             <NumberRangeInput
               name={name}
               onChange={setRange(name)}
-              value={state[name] as {from: string, to: string}}
+              value={state[name] as { from: string; to: string }}
             />
             {errors[name] && (
               <span className="filters-form__error">{errors[name]}</span>
@@ -134,7 +180,6 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
         if (options) {
           return (
             <Select
-              key={name}
               className="filters-form__select"
               title={`Select ${AttributeNames[name]}`}
               options={parseOptions(options as JewelryType[] | LabelType[])}
@@ -148,10 +193,10 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       case 'multiselect':
         return (
           <Multiselect
-            key={name}
+            className="filters-form__select"
             title={`Select ${AttributeNames[name]}`}
-            options={parseOptions(options as JewelryType[] | LabelType[])}
-            currentOptions={state[name] as MultiSelectOptionType<number>[]}
+            options={parseOptions(options as JewelryType[] | LabelType[]) as optionsType<number>[]}
+            currentOptions={state[name] as optionsType<number>[]}
             onChange={setMultiSelectOptions(name)}
           />
         )
@@ -166,55 +211,23 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       quantity: { from: '0', to: '100' },
       jewelryType: undefined,
       labels: [],
-      errors: {},
     })
   }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const newErrors = errors
+    const filters: FiltersType = {
+      title,
+      description,
+      price: [+price.from, +price.to],
+      quantity: [+quantity.from, +quantity.to],
+      jewelryTypeId: jewelryType?.value,
+      labelsIds: labels?.map((label) => label.value),
+    }
 
-    if (title.length > 100) newErrors.title = 'Maximal title length is 100'
-
-    if (description.length > 100)
-      newErrors.description = 'Maximal title ldescription is 1000'
-
-    if (
-      +price.from > +price.to
-      || +price.from < 0
-      || +price.to < 0
-    ) newErrors.price = 'Invalid price range'
-    else if (+price.from > 1000 || +price.to > 1000)
-      newErrors.price = 'Maximal price value is 1000'
-
-    if (
-      +quantity.from > +quantity.to
-      || +quantity.from < 0
-      || +quantity.to < 0
-    )
-      newErrors.quantity = 'Invalid quantity range'
-    else if (+quantity.from > 100 || +quantity.to > 100)
-      newErrors.quantity = 'Maximal quantity value is 100'
-
-    setState({ ...state, errors: newErrors }, () => {
-      for (let k in errors) {
-        const key = k as keyof ErrorsType
-        if (errors[key]) return
-      }
-
-      const filters: FiltersType = {
-        title,
-        description,
-        price: [+price.from, +price.to],
-        quantity: [+quantity.from, +quantity.to],
-        jewelryTypeId: jewelryType?.value,
-        labelsIds: labels?.map((label) => label.value),
-      }
-
-      setFilters(filters)
-      onSubmit()
-    })
+    setFilters(filters)
+    onSubmit()
   }
 
   return (
@@ -229,7 +242,11 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       ))}
       <div className="filters-form__section">
         <div className="filters-form__row">
-          <button className="filters-form__button" type="submit">
+          <button
+            className="filters-form__button"
+            type="submit"
+            disabled={!isReadyToSubmit}
+          >
             Save changes
           </button>
 
