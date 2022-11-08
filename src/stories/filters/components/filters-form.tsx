@@ -57,16 +57,16 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       from: `${filters.quantity[0]}`,
       to: `${filters.quantity[1]}`,
     },
-    ...(filters.jewelryTypeId && {
+    ...(filters.jewelryType && {
       jewelryType: {
         label: jewelryTypeList.find(
-          (type) => type._id === filters.jewelryTypeId
+          (type) => type._id === filters.jewelryType
         )!.name,
-        value: filters.jewelryTypeId,
+        value: filters.jewelryType,
       },
     }),
-    ...((filters.labelsIds && {
-      labels: filters.labelsIds.map((id) => ({
+    ...((filters.labels && {
+      labels: filters.labels.map((id) => ({
         label: labelsList.find((label) => label._id === id)!.name,
         value: id,
       })),
@@ -224,8 +224,8 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
       description,
       price: [+price.from, +price.to],
       quantity: [+quantity.from, +quantity.to],
-      jewelryTypeId: jewelryType?.value,
-      labelsIds: labels?.map((label) => label.value),
+      jewelryType: jewelryType?.value,
+      labels: labels?.map((label) => label.value),
     }
 
     setFilters(filters)

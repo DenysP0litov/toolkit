@@ -4,6 +4,7 @@ import { useState } from 'react'
 import './styles'
 import { FiltersForm } from './components/filters-form'
 import { FiltersType } from './types'
+import { attributesList } from './constants'
 
 export default {
   title: 'Filters',
@@ -17,9 +18,19 @@ const Template: ComponentStory<typeof ExpandableSidebar> = (args) => {
     description: '',
     price: [0, 1000],
     quantity: [0, 100],
-    jewelryTypeId: undefined,
-    labelsIds: [],
+    jewelryType: undefined,
+    labels: [],
   })
+
+  const data: Array<{ attribute_id: number, value: keyof FiltersType}> = []
+
+  for (let k in filters) {
+    const key = k as keyof FiltersType
+    data.push({
+      attribute_id: attributesList.find(attribute => attribute.name === key)!._id,
+      value: filters[key] as keyof FiltersType
+    })
+  }
 
   return (
     <main>

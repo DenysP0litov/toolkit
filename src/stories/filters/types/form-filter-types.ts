@@ -13,6 +13,7 @@ export type AttributeTypeType = 'text' | 'number' | 'select' | 'multiselect'
 export type AttributeType = {
   name: AttributeNameType
   type: AttributeTypeType
+  _id: number
   options?: OptionType[]
 }
 
@@ -51,8 +52,8 @@ export type FiltersType = {
   description: string // max - 1000 symbols
   price: [from: number, to: number] // min price = 0; max price = 1000
   quantity: [from: number, to: number] // min quantity = 0, max quantity = 100
-  jewelryTypeId?: JewelryType['_id']
-  labelsIds?: LabelType['_id'][]
+  jewelryType?: JewelryType['_id']
+  labels?: LabelType['_id'][]
 }
 
 export type PayloadType = {

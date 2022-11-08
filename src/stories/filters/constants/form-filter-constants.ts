@@ -70,27 +70,33 @@ export const attributesList: AttributeType[] = [
   {
     name: "title",
     type: "text",
+    _id: 1
   },
   {
     name: "description",
     type: "text",
+    _id: 2
   },
   {
     name: "quantity",
     type: "number",
+    _id: 3
   },
   {
     name: "price",
     type: "number",
+    _id: 4
   },
   {
     name: "jewelryType",
     type: "select",
+    _id: 5,
     options: jewelryTypeList,
   },
   {
     name: "labels",
     type: "multiselect",
+    _id: 6,
     options: labelsList,
   },
 ]
@@ -110,8 +116,8 @@ export const initialFilters: FiltersType = {
   description: "",
   price: [0, 1000],
   quantity: [0, 100],
-  jewelryTypeId: undefined,
-  labelsIds: undefined,
+  jewelryType: undefined,
+  labels: undefined,
 }
 
 export const AttributeNames: Record<AttributeNameType, string> = {
