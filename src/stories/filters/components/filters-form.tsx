@@ -8,18 +8,19 @@ import { Multiselect } from 'stories/multiselect'
 import {
   AttributeNameType,
   AttributeType,
-  FiltersType,
   JewelryType,
   LabelType,
 } from '../types'
-import { compareObjects, parseOptions, useStateCallback } from '../utils'
 import {
-  AttributeNames,
-  attributesList,
-  jewelryTypeList,
-  labelsList,
-} from '../constants'
+  compareObjects,
+  createFiltersState,
+  createFormState,
+  parseOptions,
+  useStateCallback,
+} from '../utils'
+import { AttributeNames, attributesList } from '../constants'
 import { NumberRangeInput, NumberRangeType } from './number-range-input'
+import { FiltersType } from '../types'
 
 type Props = {
   onSubmit: () => void
@@ -27,51 +28,20 @@ type Props = {
   setFilters: (filters: FiltersType) => void
 }
 
-type ErrorsType = {
-  title?: string
-  description?: string
-  price?: string
-  quantity?: string
-  jewelryType?: string
-  labels?: string
-}
+export type ErrorsType = Partial<Record<AttributeNameType, string>>
 
-export type FiltersFormType = {
-  title: string
-  description: string
-  price: NumberRangeType
-  quantity: NumberRangeType
-  jewelryType?: optionsType<number>
-  labels: optionsType<number>[]
-}
+export type FilterFormValuesType =
+  | string
+  | NumberRangeType
+  | (optionsType<number> | undefined)
+  | optionsType<number>[]
+
+export type FiltersFormType = Partial<
+  Record<AttributeNameType, FilterFormValuesType>
+>
 
 export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
-  const initialState = {
-    title: filters.title,
-    description: filters.description,
-    price: {
-      from: `${filters.price[0]}`,
-      to: `${filters.price[1]}`,
-    },
-    quantity: {
-      from: `${filters.quantity[0]}`,
-      to: `${filters.quantity[1]}`,
-    },
-    ...(filters.jewelryType && {
-      jewelryType: {
-        label: jewelryTypeList.find(
-          (type) => type._id === filters.jewelryType
-        )!.name,
-        value: filters.jewelryType,
-      },
-    }),
-    ...((filters.labels && {
-      labels: filters.labels.map((id) => ({
-        label: labelsList.find((label) => label._id === id)!.name,
-        value: id,
-      })),
-    }) || { labels: [] }),
-  }
+  const initialState = createFormState(filters)
 
   const [state, setState] = useState<FiltersFormType>({ ...initialState })
 
@@ -79,27 +49,32 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
 
   const [isReadyToSubmit, setReadyToSubmit] = useState(false)
 
-  const { title, description, price, quantity, jewelryType, labels } = state
-
   useEffect(() => {
     const newErrors = { ...errors }
     let newSubmitStatus = !compareObjects(state, initialState)
-    console.log({initialState, state})
 
-    if (title.length > 100) newErrors.title = 'Maximal title length is 100'
+    for (let k in state) {
+      const key = k as keyof FiltersFormType
+      const type = attributesList.find(
+        (attribute) => attribute.name === key
+      )?.type
+      let value
 
-    if (description.length > 100)
-      newErrors.description = 'Maximal title ldescription is 1000'
-
-    if (+price.from > +price.to || +price.from < 0 || +price.to < 0)
-      newErrors.price = 'Invalid price range'
-    else if (+price.from > 1000 || +price.to > 1000)
-      newErrors.price = 'Maximal price value is 1000'
-
-    if (+quantity.from > +quantity.to || +quantity.from < 0 || +quantity.to < 0)
-      newErrors.quantity = 'Invalid quantity range'
-    else if (+quantity.from > 100 || +quantity.to > 100)
-      newErrors.quantity = 'Maximal quantity value is 100'
+      switch (type) {
+        case 'text':
+          value = state[key] as string
+          if (value.length > 100)
+            newErrors[key] = `Maximal ${key} length is 100`
+          else delete newErrors[key]
+          break
+        case 'number':
+          value = state[key] as NumberRangeType
+          if (+value.from > +value.to) newErrors[key] = `Invalid ${key} range`
+          else if (+value.to > 1000 || +value.from > 1000)
+            newErrors[key] = `Maximal ${key} value is 1000`
+          else delete newErrors[key]
+      }
+    }
 
     for (let k in newErrors) {
       const key = k as keyof ErrorsType
@@ -122,8 +97,6 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
         ...state,
         [name]: newRange,
       })
-
-      setErrors({ ...errors, [name]: '' })
     }
   }
 
@@ -196,7 +169,11 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
           <Multiselect
             className="filters-form__select"
             title={`Select ${AttributeNames[name]}`}
-            options={parseOptions(options as JewelryType[] | LabelType[]) as optionsType<number>[]}
+            options={
+              parseOptions(
+                options as JewelryType[] | LabelType[]
+              ) as optionsType<number>[]
+            }
             currentOptions={state[name] as optionsType<number>[]}
             onChange={setMultiSelectOptions(name)}
           />
@@ -218,17 +195,7 @@ export const FiltersForm: FC<Props> = ({ onSubmit, filters, setFilters }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    const filters: FiltersType = {
-      title,
-      description,
-      price: [+price.from, +price.to],
-      quantity: [+quantity.from, +quantity.to],
-      jewelryType: jewelryType?.value,
-      labels: labels?.map((label) => label.value),
-    }
-
-    setFilters(filters)
+    setFilters(createFiltersState(state))
     onSubmit()
   }
 

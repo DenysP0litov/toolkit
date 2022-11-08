@@ -99,6 +99,11 @@ export const attributesList: AttributeType[] = [
     _id: 6,
     options: labelsList,
   },
+  {
+    name: "new",
+    type: "number",
+    _id: 7,
+  },
 ]
 
 export const JewelryTypesNames: Record<JewelryNameType, string> = {
@@ -111,14 +116,14 @@ export const JewelryTypesNames: Record<JewelryNameType, string> = {
   gemstone: "Gemstones",
 }
 
-export const initialFilters: FiltersType = {
-  title: "",
-  description: "",
-  price: [0, 1000],
-  quantity: [0, 100],
-  jewelryType: undefined,
-  labels: undefined,
-}
+// export const initialFilters: FiltersType = {
+//   title: "",
+//   description: "",
+//   price: [0, 1000],
+//   quantity: [0, 100],
+//   jewelryType: undefined,
+//   labels: undefined,
+// }
 
 export const AttributeNames: Record<AttributeNameType, string> = {
   title: "Product Title",
@@ -126,5 +131,6 @@ export const AttributeNames: Record<AttributeNameType, string> = {
   price: "Price",
   quantity: "Quantity",
   jewelryType: "Jewelry Type",
-  labels: "Tags/Labels"
+  labels: "Tags/Labels",
+  new: "New attribute"
 }
